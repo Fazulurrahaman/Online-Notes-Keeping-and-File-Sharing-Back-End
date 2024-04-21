@@ -4,6 +4,8 @@ import java.io.ByteArrayOutputStream;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -11,6 +13,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +36,8 @@ import jakarta.websocket.server.PathParam;
 public class NotesController {
 
 	ObjectMapper mapper = new ObjectMapper();
+	
+	Logger LOGGER = LoggerFactory.getLogger(NotesController.class);
 	
 	@Autowired
 	private NotesRepository notesRepository;
@@ -157,4 +162,23 @@ public class NotesController {
 	        renderer.finishPDF();
 	        return outputStream.toByteArray();
 	    }
+	 
+	 @PatchMapping("/favourite")
+	 public NotesResponse updateFavourite(@RequestBody NoteModel payload) {
+			NotesResponse response = new NotesResponse(HttpStatus.BAD_REQUEST.value(), "FAIL",
+					HttpStatus.BAD_REQUEST.getReasonPhrase());
+			try {
+//				LOGGER.info("payload {}", mapper.writeValueAsString(payload) );
+				System.out.println(payload.getIsFavourite() );
+				System.out.println(payload.getId());
+				notesRepository.updateFavourite(payload.getIsFavourite() ? 1 :0, payload.getId());			
+	            response = new NotesResponse(200, "SUCCESS", "Record updated successfully");
+
+				
+			}catch(Exception e) {
+				response = new NotesResponse(HttpStatus.INTERNAL_SERVER_ERROR.value(), "FAIL",
+	 					e.getMessage());
+			}
+			return response;
+	 }
 }

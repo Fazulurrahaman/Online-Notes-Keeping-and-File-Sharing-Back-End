@@ -31,6 +31,10 @@ public class NoteModel extends BaseEntityModel{
 	@Column(name ="user_id")
 	private String userId;	
 		
+	@Column(name ="is_favourite")
+	private boolean isFavourite;	
+		
+	
 	public String getTitle() {
 		return title;
 	}
@@ -57,6 +61,16 @@ public class NoteModel extends BaseEntityModel{
 
 	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+
+	public boolean getIsFavourite() {
+		return isFavourite;
+	}
+
+
+	public void setIsFavourite(boolean isFavourite) {
+		this.isFavourite = isFavourite;
 	}
 	
 	
